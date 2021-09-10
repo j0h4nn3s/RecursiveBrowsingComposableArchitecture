@@ -14,8 +14,10 @@ struct FolderView: View {
     struct ViewState: Equatable {
         let content: IdentifiedArrayOf<Item>?
         let selectionItemId: Item.ID?
+        let item: Item
 
         init(state: FolderState) {
+            self.item = state.item
             self.content = state.content
             self.selectionItemId = state.selection.value?.item.id
         }
@@ -23,24 +25,28 @@ struct FolderView: View {
 
     var body: some View {
         WithViewStore(store.scope(state: ViewState.init)) { viewStore in
-            if let content = viewStore.state.content {
-                List(content) { item in
-                    NavigationLink(
-                        destination: IfLetStore(
-                            self.store.scope(
-                                state: \.selection.value,
-                                action: FolderAction.subFolder
-                            ),
-                            then: FolderView.init),
-                        tag: item.id,
-                        selection: viewStore.binding(get: \.selectionItemId, send: FolderAction.navigateTo),
-                        label: {
-                            Text(item.title)
-                        })
+            VStack {
+                if let content = viewStore.state.content {
+                    List(content) { item in
+                        NavigationLink(
+                            destination: IfLetStore(
+                                self.store.scope(
+                                    state: \.selection.value,
+                                    action: FolderAction.subFolder
+                                ),
+                                then: FolderView.init),
+                            tag: item.id,
+                            selection: viewStore.binding(get: \.selectionItemId, send: FolderAction.navigateTo),
+                            label: {
+                                Text(item.title)
+                            })
+                    }
+                } else {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 }
-            } else {
-                ProgressView()
-            }
+            }.navigationTitle(viewStore.item.title)
         }
     }
 }
