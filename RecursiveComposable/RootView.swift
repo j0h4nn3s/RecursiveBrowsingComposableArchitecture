@@ -18,7 +18,7 @@ struct RootView: View {
                     .onAppear(perform: {
                         viewStore.send(.onAppear)
                     })
-            }
+            }.navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
