@@ -81,7 +81,7 @@ let folderReducer = Reducer<FolderState, FolderAction, FolderEnvironment>.recurs
         )
         .run(&state, action, environment)
     }
-}.debug()
+}
 
 struct Item: Equatable, Identifiable {
     let id: Int

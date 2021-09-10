@@ -11,8 +11,18 @@ import ComposableArchitecture
 struct FolderView: View {
     let store: Store<FolderState, FolderAction>
 
+    struct ViewState: Equatable {
+        let content: IdentifiedArrayOf<Item>?
+        let selectionItemId: Item.ID?
+
+        init(state: FolderState) {
+            self.content = state.content
+            self.selectionItemId = state.selection.value?.item.id
+        }
+    }
+
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             if let content = viewStore.state.content {
                 List(content) { item in
                     NavigationLink(
@@ -23,7 +33,7 @@ struct FolderView: View {
                             ),
                             then: FolderView.init),
                         tag: item.id,
-                        selection: viewStore.binding(get: \.selection.value?.item.id, send: FolderAction.navigateTo),
+                        selection: viewStore.binding(get: \.selectionItemId, send: FolderAction.navigateTo),
                         label: {
                             Text(item.title)
                         })

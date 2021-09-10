@@ -11,7 +11,7 @@ import ComposableArchitecture
 struct RootView: View {
     let store: Store<RootState, RootAction>
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.stateless) { viewStore in
             NavigationView {
                 FolderView(store: self.store.scope(state: \.rootFolder, action: RootAction.rootFolder))
                     .navigationTitle("Root")
